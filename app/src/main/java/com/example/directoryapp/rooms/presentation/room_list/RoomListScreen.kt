@@ -11,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -29,7 +31,7 @@ fun RoomListScreen(
     navController: NavController,
     viewModel: RoomsViewModel = hiltViewModel()
 ) {
-    val state = viewModel.roomsState.value
+    val state by viewModel.roomsState.collectAsState()
 
     val lifecycleEvent = rememberLifecycleEvent()
     LaunchedEffect(lifecycleEvent) {
@@ -41,16 +43,17 @@ fun RoomListScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(state.roomsList) { room ->
-                RoomListItem(
-                    room = room
-                )
+        if (state.roomsList.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(state.roomsList) { room ->
+                    RoomListItem(
+                        room = room
+                    )
+                }
             }
-        }
-        if (state.error.isNotBlank()) {
+        } else if (state.error.isNotBlank()) {
             Text(
                 text = state.error,
                 color = MaterialTheme.colorScheme.onError,
@@ -60,8 +63,7 @@ fun RoomListScreen(
                     .padding(horizontal = 20.dp)
                     .align(Alignment.Center)
             )
-        }
-        if (state.isLoading) {
+        } else if (state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }

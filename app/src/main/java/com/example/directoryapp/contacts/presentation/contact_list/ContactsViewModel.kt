@@ -33,6 +33,12 @@ class ContactsViewModel @Inject constructor(
     val contactDetailsState: StateFlow<ContactDetailsState> = _contactDetailsState.asStateFlow()
 
     fun getContactList() {
+        _contactDetailsState.update {
+            it.copy(
+                contactDetails = Contact()
+            )
+        }
+
         getContacts().onEach { result ->
             when (result) {
                 is Resource.Loading -> {
@@ -63,20 +69,18 @@ class ContactsViewModel @Inject constructor(
     }
 
     fun getContactDetails(id: String) {
-        if (_contactsState.value.contactsList.isNotEmpty()) {
-            val contactDetails = getContactDetails(id, _contactsState.value.contactsList)
-            if (contactDetails != null) {
-                _contactDetailsState.update {
-                    it.copy(
-                        contactDetails = contactDetails
-                    )
-                }
-            } else {
-                _contactDetailsState.update {
-                    it.copy(
-                        error = "No details found for selected contact"
-                    )
-                }
+        val contactDetails = getContactDetails(id, _contactsState.value.contactsList)
+        if (contactDetails != null) {
+            _contactDetailsState.update {
+                it.copy(
+                    contactDetails = contactDetails
+                )
+            }
+        } else {
+            _contactDetailsState.update {
+                it.copy(
+                    error = "No details found for selected contact"
+                )
             }
         }
     }

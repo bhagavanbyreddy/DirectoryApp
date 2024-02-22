@@ -1,5 +1,6 @@
 package com.example.directoryapp.contacts.presentation.contact_details
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -56,32 +57,33 @@ fun ContactDetailsScreen(
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        Column {
-            Spacer(modifier = Modifier.height(20.dp))
-            Box(
-                modifier = Modifier
-                    .aspectRatio(16 / 9f)
-                    .fillMaxWidth()
-                    .shadow(elevation = 16.dp)
-                    .padding(16.dp)
-            ) {
-                AsyncImage(
-                    alignment = Alignment.Center,
-                    model = "${state.contactDetails.avatar}",
-                    contentDescription = state.contactDetails.firstName,
-                    error = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentScale = ContentScale.Crop,
+        if (state.contactDetails.id.isNotBlank()) {
+            Column {
+                Spacer(modifier = Modifier.height(20.dp))
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(
-                            RoundedCornerShape(20.dp)
-                        ),
-                    placeholder = painterResource(id = R.drawable.ic_launcher_foreground)
-                )
-            }
-            Spacer(modifier = Modifier.height(20.dp))
+                        .aspectRatio(16 / 9f)
+                        .fillMaxWidth()
+                        .shadow(elevation = 16.dp)
+                        .padding(16.dp)
+                ) {
+                    AsyncImage(
+                        alignment = Alignment.Center,
+                        model = "${state.contactDetails.avatar}",
+                        contentDescription = state.contactDetails.firstName,
+                        error = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(
+                                RoundedCornerShape(20.dp)
+                            ),
+                        placeholder = painterResource(id = R.drawable.ic_launcher_foreground)
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
                 ElevatedCard(
-                    modifier  = Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp),
                     shape = RoundedCornerShape(12.dp),
@@ -123,9 +125,8 @@ fun ContactDetailsScreen(
                         Spacer(modifier = Modifier.height(30.dp))
                     }
                 }
-        }
-
-        if (state.error.isNotBlank()) {
+            }
+        } else if (state.error.isNotBlank()) {
             Text(
                 text = state.error,
                 color = MaterialTheme.colorScheme.onError,
@@ -135,9 +136,7 @@ fun ContactDetailsScreen(
                     .padding(horizontal = 20.dp)
                     .align(Alignment.Center)
             )
-        }
-
-        if (state.isLoading) {
+        } else if (state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
 
