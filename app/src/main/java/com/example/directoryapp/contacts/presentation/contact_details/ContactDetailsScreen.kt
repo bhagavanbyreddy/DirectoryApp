@@ -18,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +43,7 @@ fun ContactDetailsScreen(
     navController: NavController,
     viewModel: ContactsViewModel = hiltViewModel()
 ) {
-    val state = viewModel.contactDetailsState.value
+    val state by viewModel.contactDetailsState.collectAsState()
     val id = navController.currentBackStackEntry?.arguments?.getString(Constants.KEY_ID)
 
     val lifecycleEvent = rememberLifecycleEvent()
